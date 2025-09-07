@@ -1,24 +1,29 @@
-import {API_URL} from "../../../(home)/page";
-import {Suspense} from "react";
-import MovieInfo from "../../../../components/movie-info";
+import { Suspense } from "react";
+import MovieInfo, { getMovie } from "../../../../components/movie-info";
 import MovieVideos from "../../../../components/movie-videos";
 
+interface IParams {
+    params: { id: string };
+}
 
+export async function generateMetadata({ params: { id } }: IParams) {
+    const movie = await getMovie(id);
+    return {
+        title: movie.title,
+    };
+}
 
-
-
-export default async function MovieDetail({params: {id}, searchParams}: { params: { id: string }, searchParams: {} }) {
-    // console.log(id, await searchParams);
-    // const movie = await getMovie(id);
-    return(
+export default async function MovieDetailPage({ params: { id } }: IParams) {
+    return (
         <div>
-            <Suspense fallback={"Loading Movie info"}>
-                <MovieInfo id={id}/>
+            <Suspense fallback={<h1>Loading movie info</h1>}>
+                <MovieInfo id={id} />
             </Suspense>
-            <p>-----------------------------------------</p>
-            <Suspense fallback={(<h1>Loading Movie Videos</h1>)}>
-                <MovieVideos id={id}/>
+            <Suspense fallback={<h1>Loading movie videos</h1>}>
+                <MovieVideos id={id} />
             </Suspense>
         </div>
-    )
+    );
 }
+
+export const runtime = "edge";
